@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class Ball : MonoBehaviour
 {
+    public object Point { get; internal set; }
 
     public Rigidbody rb; // reference to the Rigidbody component of the ball
     public float startSpeed = 40f; // the speed at which the ball starts moving
@@ -19,37 +20,6 @@ public class Ball : MonoBehaviour
 
     private Transform _startPosition;
 
-    private List<GameObject> _pins = new();
-
-    private readonly Dictionary<GameObject, Transform> _pinsDefaultTransform = new();
-
-    public int Point { get; set; }
-
-    [SerializeField] private Animator cameraAnim;
-
-    private TextMeshProUGUI feedBack;
-
-
-    private void Start()
-    {
-        Application.targetFrameRate = 60;
-
-        _arrow = GameObject.FindGameObjectWithTag("Arrow").transform;
-
-        // get the reference to the Rigidbody component of the ball
-        rb = GetComponent<Rigidbody>();
-
-        _startPosition = transform;
-
-        _pins = GameObject.FindGameObjectsWithTag("Pin").ToList();
-
-        foreach (var pin in _pins)
-        {
-            _pinsDefaultTransform.Add(pin, pin.transform);
-        }
-
-        feedBack = GameObject.FindGameObjectWithTag("FeedBack").GetComponent<TextMeshProUGUI>();
-    }
 
     void Update()
     {
@@ -67,31 +37,32 @@ public class Ball : MonoBehaviour
 
     private IEnumerator Shoot()
     {
-        cameraAnim.SetTrigger("Go");
-        cameraAnim.SetFloat("CameraSpeed", _arrow.transform.localScale.z);
+        //ameraAnim.SetTrigger("Go");
+        //cameraAnim.SetFloat("CameraSpeed", _arrow.transform.localScale.z);
         _ballMoving = true;
         _arrow.gameObject.SetActive(false);
         rb.isKinematic = false;
 
         // calculate the force vector to apply to the ball
-        Vector3 forceVector = _arrow.forward * (startSpeed * _arrow.transform.localScale.z);
+        Vector3 forceVector = (-_arrow.forward) * (startSpeed * _arrow.transform.localScale.z);
 
         // calculate the position at which to apply the force (in this case, the center of the ball)
         Vector3 forcePosition = transform.position + (transform.right * 0.5f);
 
         // apply the force at the specified position
-        rb.AddForceAtPosition(forceVector, forcePosition, ForceMode.Impulse);
+        rb.AddForceAtPosition(forceVector, -forcePosition, ForceMode.Impulse);
 
 
         yield return new WaitForSecondsRealtime(7);
 
         _ballMoving = false;
 
-        GenerateFeedBack();
+
+        //GenerateFeedBack();
 
         yield return new WaitForSecondsRealtime(2);
 
-        ResetGame();
+        //ResetGame();
     }
 
 
@@ -100,7 +71,7 @@ public class Ball : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    private void GenerateFeedBack()
+    /*private void GenerateFeedBack()
     {
         feedBack.text = Point switch
         {
@@ -113,4 +84,5 @@ public class Ball : MonoBehaviour
 
         feedBack.GetComponent<Animator>().SetTrigger("Show");
     }
+    */
 }

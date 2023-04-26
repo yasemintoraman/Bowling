@@ -1,17 +1,9 @@
 fileFormatVersion: 2
-guid: 7ff73fec3842c234987ceb660479a6fc
+guid: 79b05e6eee5e947479afa1d605a5283f
 ModelImporter:
   serializedVersion: 21300
-  internalIDToNameTable:
-  - first:
-      74: 1827226128182048838
-    second: Take 001
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Arrow5
-    second: {fileID: 2100000, guid: 069a79ae7f4220d48b1a2cc9d36ab1f4, type: 2}
+  internalIDToNameTable: []
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

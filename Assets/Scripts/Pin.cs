@@ -9,88 +9,88 @@ public class Pin : MonoBehaviour
 {
     private bool _done;
 
+    private List<Vector3> pinPositions;
+    private List<Quaternion> pinRotations;
+
     private List<GameObject> _pins = new();
+    private List<GameObject> fallenPins = new();
 
-    public Vector3[] pinPositions;
-    public bool[] pinIsDown;
-
-
-    private readonly Dictionary<GameObject, Transform> _pinsDefaultTransform = new();
-
-    public int Point { get; set; }
-
+    private Ball ball;
 
     private void Start()
     {
-       
+        ball = GameObject.FindWithTag("Ball").GetComponent<Ball>();
+
+
         _pins = GameObject.FindGameObjectsWithTag("Pin").ToList();
-        pinPositions = new Vector3[_pins.Count];
-        pinIsDown = new bool[_pins.Count];
+        pinPositions = new List<Vector3>();
+        pinRotations = new List<Quaternion>();
 
-        for (int i = 0; i < _pins.Count; i++)
+        foreach (var pin in _pins)
         {
-            pinPositions[i] = _pins[i].transform.position;
-
-            pinIsDown[i] = false;
+            pinPositions.Add(pin.transform.position);
+            pinRotations.Add(pin.transform.rotation);  
         }
 
-
-        /*foreach (var pin in _pins)
-        {
-            _pinsDefaultTransform.Add(pin, pin.transform);
-     
-  
-        }*/
-
-        //feedBack = GameObject.FindGameObjectWithTag("FeedBack").GetComponent<TextMeshProUGUI>();
     }
 
-
-    /*private void FixedUpdate()
-    {
-        for (int i = 0; i < _pins.Count; i++)
-        {
-            if (_pins[i].transform.position.y < 0f)
-            {
-                pinIsDown[i] = true;
-            }
-        }
-
-        for (int i = 0; i < _pins.Count; i++)
-        {
-            if (!pinIsDown[i]) {
-                _pins[i].transform.position = pinPositions[i];
-                
-
-                _pins[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
-                _pins[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-            }
-
-
-
-
-        }
-    }
-    */
     private void OnCollisionEnter(Collision collision)
     {
-        if ((collision.collider.CompareTag("Ball") || collision.collider.CompareTag("Pin")) && !_done)
-        {
-            // get the velocity of the pin after the collision
-            float velocity = GetComponent<Rigidbody>().velocity.magnitude;
+            if ((collision.collider.CompareTag("Ball") || collision.collider.CompareTag("Pin")) && !_done)
+            {
+
+                // get the velocity of the pin after the collision
+                float velocity = GetComponent<Rigidbody>().velocity.magnitude;
 
             // check if the velocity has dropped below the fall threshold
-            if (velocity < 5)
-            {
-                var point = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().Point;
-                //point += 1;
-                GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().Point = point;
-                //Debug.Log("düþtü");
+                if (velocity < 5)
+                {
+                    var point = GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().Point;
+                    point += 1;
+                    GameObject.FindGameObjectWithTag("Point").GetComponent<TextMeshProUGUI>().text = $"Score: {point}";
+                    GameObject.FindGameObjectWithTag("Ball").GetComponent<Ball>().Point = point;
                 _done = true;
+                float waitTime = 5f;
+                StartCoroutine(DisableAfterTime(waitTime)); 
+
             }
 
         }
-
     }
 
+    IEnumerator DisableAfterTime(float waitTime)
+    {
+        yield return new WaitForSecondsRealtime(waitTime);
+        gameObject.SetActive(false);
+    }
+
+
+    public void resetPins()
+    {
+        foreach (var pin in _pins)
+        {
+            if (!pin.activeSelf)
+            {
+                fallenPins.Add(pin);
+            }
+        }
+
+        if (fallenPins.Count() == _pins.Count || ball.shoutCount ==2 )
+        {
+            foreach (var pin in _pins)
+            {
+                pin.SetActive(true);
+                var pinPhysics = pin.GetComponent<Rigidbody>();
+                pinPhysics.velocity = Vector3.zero;
+                pinPhysics.position = pinPositions[_pins.IndexOf(pin)];
+                pinPhysics.rotation = pinRotations[_pins.IndexOf(pin)];
+                pinPhysics.angularVelocity = Vector3.zero;
+
+            }
+        }
+    }
 }
+
+
+
+

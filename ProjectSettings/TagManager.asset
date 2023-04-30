@@ -7,6 +7,7 @@ TagManager:
   - Ball
   - Pin
   - Arrow
+  - Point
   layers:
   - Default
   - TransparentFX

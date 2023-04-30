@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 
 public class Ball : MonoBehaviour
 {
-    public object Point { get; internal set; }
 
     public Rigidbody rb; // reference to the Rigidbody component of the ball
     public float startSpeed = 40f; // the speed at which the ball starts moving
@@ -18,7 +17,33 @@ public class Ball : MonoBehaviour
 
     private bool _ballMoving;
 
-    private Transform _startPosition;
+    //private Transform _startPosition;
+
+    private Vector3 startPosition;
+
+
+    private readonly Dictionary<GameObject, Transform> _pinsDefaultTransform = new();
+
+    public int Point { get; set; }
+
+
+    public int shoutCount = 0;
+
+
+
+    private void Start()
+    {
+
+        Application.targetFrameRate = 60;
+
+        _arrow = GameObject.FindGameObjectWithTag("Arrow").transform;
+
+        // get the reference to the Rigidbody component of the ball
+        rb = GetComponent<Rigidbody>();
+
+        startPosition = transform.position;
+
+    }
 
 
     void Update()
@@ -31,14 +56,14 @@ public class Ball : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             StartCoroutine(Shoot());
+            shoutCount += 1;
         }
 
     }
 
     private IEnumerator Shoot()
     {
-        //ameraAnim.SetTrigger("Go");
-        //cameraAnim.SetFloat("CameraSpeed", _arrow.transform.localScale.z);
+
         _ballMoving = true;
         _arrow.gameObject.SetActive(false);
         rb.isKinematic = false;
@@ -53,36 +78,34 @@ public class Ball : MonoBehaviour
         rb.AddForceAtPosition(forceVector, -forcePosition, ForceMode.Impulse);
 
 
-        yield return new WaitForSecondsRealtime(7);
+        yield return new WaitForSecondsRealtime(5);
+
+   
+        transform.position = startPosition;
+        transform.rotation = Quaternion.identity;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        _arrow.gameObject.SetActive(true);
 
         _ballMoving = false;
 
 
-        //GenerateFeedBack();
+        //yield return new WaitForSecondsRealtime(1);
 
-        yield return new WaitForSecondsRealtime(2);
+        if (shoutCount == 2)
+        {
+            ResetGame();
+            shoutCount = 0;
+        }
 
-        //ResetGame();
+        
     }
 
-
-    private static void ResetGame()
+    public static void ResetGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    /*private void GenerateFeedBack()
-    {
-        feedBack.text = Point switch
-        {
-            0 => "Nothing!",
-            > 0 and < 3 => "You are learning Now!",
-            >= 3 and < 6 => "It was close!",
-            >= 6 and < 10 => "It was nice!",
-            _ => "Perfect! You are a master!"
-        };
 
-        feedBack.GetComponent<Animator>().SetTrigger("Show");
-    }
-    */
 }

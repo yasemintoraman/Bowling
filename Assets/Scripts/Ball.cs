@@ -29,6 +29,10 @@ public class Ball : MonoBehaviour
 
     public int shoutCount = 0;
 
+    public AudioSource audio_ball;
+
+    private Pin pin;
+
 
 
     private void Start()
@@ -43,6 +47,10 @@ public class Ball : MonoBehaviour
 
         startPosition = transform.position;
 
+        audio_ball = GetComponent<AudioSource>();
+
+        
+
     }
 
 
@@ -55,6 +63,7 @@ public class Ball : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            audio_ball.Play();
             StartCoroutine(Shoot());
             shoutCount += 1;
         }
@@ -104,7 +113,7 @@ public class Ball : MonoBehaviour
 
     public static void ResetGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(3);
     }
 
 

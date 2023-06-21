@@ -4,5 +4,17 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/bowling-main.unity
+    guid: e0d21473cb1b47041af5578abdf890ae
+  - enabled: 1
+    path: Assets/Scenes/about.unity
+    guid: cbdb8dfc8c5a641e39b886842b894465
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/play again.unity
+    guid: f9ced68eed07e4c0b9c73c1c64f131c4
   m_configObjects: {}

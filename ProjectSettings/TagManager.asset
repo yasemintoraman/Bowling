@@ -8,6 +8,10 @@ TagManager:
   - Pin
   - Arrow
   - Point
+  - PinSetter
+  - Point2
+  - Point1
+  - Canvas
   layers:
   - Default
   - TransparentFX
